@@ -4,10 +4,10 @@ def part1():
     depth = horizontal = 0
 
     for line in lines:
-        instruction = line.split()[0]
-        value = int(line.split()[1])
+        cmd, value = line.split()
+        value = int(value)
 
-        match instruction:
+        match cmd:
             case 'forward':
                 horizontal += value
             case 'up':
@@ -23,10 +23,10 @@ def part2():
     depth = horizontal = aim = 0
 
     for line in lines:
-        instruction = line.split()[0]
-        value = int(line.split()[1])
+        cmd, value = line.split()
+        value = int(value)
 
-        match instruction:
+        match cmd:
             case 'forward':
                 horizontal += value
                 depth += aim * value
