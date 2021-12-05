@@ -10,8 +10,7 @@ def solve(diagonal = True):
 
     for line in lines:
         match = pattern.match(line)
-        x1, y1, x2, y2 = match.groups()
-        x1, y1, x2, y2 = int(x1), int(y1), int(x2), int(y2)
+        x1, y1, x2, y2 = [int(x) for x in match.groups()]
 
         if x1 == x2:
             dx = 0
