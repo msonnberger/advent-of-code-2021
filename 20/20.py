@@ -1,46 +1,45 @@
 from aocd import lines
-import numpy as np
+from collections import defaultdict
 
 
 algo = lines[0]
 lines = lines[2:]
-row_count = len(lines)
-col_count = len(lines[0])
-orig = np.ndarray((row_count, col_count), dtype=object)
+size = len(lines)
+orig = defaultdict(lambda:'.')
 
-for i in range(row_count):
-    for j in range(col_count):
-        orig[i, j] = lines[i][j]
+for i in range(size):
+    for j in range(size):
+        orig[(i, j)] = lines[i][j]
 
 
-def enhance(pic):
-    shape = pic.shape
-    enhanced = np.ndarray((shape[0] - 2, shape[1] - 2), dtype=object)
+def enhance(pic, start, end):
+    enhanced = defaultdict()
     
-    for x in range(1, shape[0] - 1):
-        for y in range(1, shape[1] - 1):
-            comb = ''
+    for x in range(start, end):
+        for y in range(start, end):
+            conv = ''
             for i in (-1, 0, 1):
                 for j in (-1, 0, 1):
-                    comb += pic[x + i, y + j]
+                    point = (x + i, y + j)
+                    conv += pic[point]
 
-            comb = comb.replace('.', '0').replace('#', '1')
-            new_pixel = algo[int(comb, 2)]
-            enhanced[x - 1, y - 1] = new_pixel
+            conv = conv.replace('.', '0').replace('#', '1')
+            enhanced[(x, y)] = algo[int(conv, 2)]
     
     return enhanced
 
 
 def solve(n, image):
+    start = -1
+    end = size + 1
+
     for i in range(n):
-        if i % 2 == 0:
-            image = np.pad(image, 2, constant_values='.')
-        else:
-            image = np.pad(image, 2, constant_values='#')
+        image.default_factory = (lambda:'.') if i % 2 == 0 else (lambda:'#')
+        image = enhance(image, start, end)
+        start -= 1
+        end += 1
 
-        image = enhance(image)
-
-    return np.count_nonzero(image == '#')
+    return sum(val == '#' for val in image.values())
 
 
 print('part 1:', solve(2, orig))
